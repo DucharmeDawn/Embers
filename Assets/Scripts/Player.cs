@@ -9,9 +9,10 @@ public class Player : MonoBehaviour {
 	float jumpForce = 20;
 	float horizontalForce;
 	float jumpingForce;
-	float jumpTime = .05f;
+	float jumpTime = .5f;
 	bool grounded;
-
+    bool jump;
+    bool crazy = false;
 
 	// Use this for initialization
 	void Start () {
@@ -20,34 +21,47 @@ public class Player : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
+        jump = Input.GetButton("Jump");
 	}
 
-	private void onColliderEnter2D(Collider2D col){
-		if (col.name == ("ground")) {
-			grounded = true;
-		}
-	}
-	private void FixedUpdate()
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.name == ("ground"))
+        {
+            grounded = true;
+            Debug.Log(grounded);
+        }
+    }
+
+    private void FixedUpdate()
 	{
 		horizontalForce = Input.GetAxis("Horizontal");
 		float y = rb.velocity.y;
 		jumpingForce = Input.GetAxis("Jump");
 		//rb.AddForce(new Vector2(groundAcc * horizontalForce, 0));
 		rb.velocity = new Vector2(groundAcc * horizontalForce, y);
-		grounded = (jumpingForce == 0);
-		if (jumpTime > 0) {
-			if (Input.GetButton("Jump")) {
+		if (jumpTime > 0 && grounded) {
+            Debug.Log("jumped");
+            if (jump) {
+                crazy = true;
 				grounded = false;
 				float x = rb.velocity.x;
 				rb.velocity = new Vector2 (x, jumpForce);
 				jumpTime -= Time.deltaTime;
+                Debug.Log("jumped");
 			}
 		} else {
-			rb.velocity = new Vector2 (groundAcc * horizontalForce, 0);
-		}	
+            if ((!grounded || jumpTime < 0) && crazy)
+            {
+                crazy = false;
+                rb.velocity = new Vector2(groundAcc * horizontalForce, 0);
+            } else
+            {
+                rb.velocity = new Vector2(groundAcc * horizontalForce, rb.velocity.y);
+            }
+        }	
 		if (grounded) {
-			jumpTime = .05f;
+			jumpTime = .5f;
 		}
 	}
 }
