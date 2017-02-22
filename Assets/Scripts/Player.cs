@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
 	float jumpForce = 20;
 	float horizontalForce;
 	float jumpingForce;
-	float jumpTime = .5f;
+	float jumpTime = .25f;
 	bool grounded;
     bool jump;
     bool crazy = false;
@@ -40,28 +40,25 @@ public class Player : MonoBehaviour {
 		jumpingForce = Input.GetAxis("Jump");
 		//rb.AddForce(new Vector2(groundAcc * horizontalForce, 0));
 		rb.velocity = new Vector2(groundAcc * horizontalForce, y);
-		if (jumpTime > 0 && grounded) {
-            Debug.Log("jumped");
-            if (jump) {
+		if (jumpTime > 0 && jump) {
                 crazy = true;
 				grounded = false;
 				float x = rb.velocity.x;
 				rb.velocity = new Vector2 (x, jumpForce);
 				jumpTime -= Time.deltaTime;
                 Debug.Log("jumped");
-			}
 		} else {
-            if ((!grounded || jumpTime < 0) && crazy)
+            if (crazy)
             {
                 crazy = false;
                 rb.velocity = new Vector2(groundAcc * horizontalForce, 0);
-            } else
+            } else if (!(grounded))
             {
                 rb.velocity = new Vector2(groundAcc * horizontalForce, rb.velocity.y);
             }
         }	
 		if (grounded) {
-			jumpTime = .5f;
+			jumpTime = .25f;
 		}
 	}
 }
