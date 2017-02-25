@@ -14,6 +14,11 @@ public class Player : MonoBehaviour {
     bool jump;
     bool crazy = false;
 
+    float waterTime = 0.5f;
+    float waterShootTime = 0.25f;
+
+    public GameObject water;
+
 	// Use this for initialization
 	void Start () {
 		rb = gameObject.GetComponent<Rigidbody2D>();
@@ -22,7 +27,15 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         jump = Input.GetButton("Jump");
-	}
+        if (Input.GetButton("Fire1") && waterTime > waterShootTime)
+        {
+            Debug.Log("Player" + rb.position.x + ", " + rb.position.y);
+            //GameObject water = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Instantiate<GameObject>(water, rb.transform.position, Quaternion.identity);
+            waterTime = 0;
+        }
+        waterTime += Time.deltaTime;
+    }
 
     void OnCollisionEnter2D(Collision2D col)
     {
@@ -46,7 +59,6 @@ public class Player : MonoBehaviour {
 				float x = rb.velocity.x;
 				rb.velocity = new Vector2 (x, jumpForce);
 				jumpTime -= Time.deltaTime;
-                Debug.Log("jumped");
 		} else {
             if (crazy)
             {
