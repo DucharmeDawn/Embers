@@ -9,7 +9,7 @@ public class Water : MonoBehaviour {
 
     Rigidbody2D rb;
 
-    float waterForce = 5000;
+    public float waterForce = 750;
 
 
 	// Use this for initialization
@@ -19,9 +19,7 @@ public class Water : MonoBehaviour {
         rb = gameObject.GetComponent<Rigidbody2D>();
         Vector2 screenPlayer = GameObject.Find("Main Camera").GetComponent<Camera>().WorldToScreenPoint(playerRB.position);
         Vector2 mouse = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        Debug.Log(mouse);
         mouse -= screenPlayer;
-        Debug.Log(mouse);
         rb.velocity = mouse.normalized * 27;
 	}
 	
@@ -39,7 +37,15 @@ public class Water : MonoBehaviour {
         {
             Vector2 forceVec = -1 * (rb.position - playerRB.position);
             float dist = forceVec.magnitude;
-            playerRB.AddForce(forceVec.normalized * (1 / dist) * waterForce);
+            forceVec = -1 * (rb.position - playerRB.position).normalized;
+            forceVec.x *= 2f;
+            forceVec.y *= 0.5f;
+            if (player.GetComponent<Player>().isGrounded())
+            {
+                playerRB.AddForce(new Vector2(0, forceVec.y * waterForce / (dist * dist)));
+            } else {
+                playerRB.AddForce(forceVec * waterForce / (dist * dist));
+            }
             Debug.Log("kill");
             GameObject.Destroy(this.gameObject);
         }

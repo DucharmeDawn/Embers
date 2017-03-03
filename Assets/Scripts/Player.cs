@@ -15,7 +15,7 @@ public class Player : MonoBehaviour {
     bool crazy = false;
 
     float waterTime = 0.5f;
-    float waterShootTime = 0.25f;
+    float waterShootTime = 0.025f;//amount of time between each water particle
 
     public GameObject water;
 
@@ -23,6 +23,11 @@ public class Player : MonoBehaviour {
 	void Start () {
 		rb = gameObject.GetComponent<Rigidbody2D>();
 	}
+
+    public bool isGrounded()
+    {
+        return grounded;
+    }
 
 	// Update is called once per frame
 	void Update () {
@@ -39,10 +44,17 @@ public class Player : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.name == ("ground"))
+        if (col.gameObject.tag == ("Ground"))
         {
             grounded = true;
-            Debug.Log(grounded);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            grounded = false;
         }
     }
 
