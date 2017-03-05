@@ -48,11 +48,10 @@ public class Water : MonoBehaviour {
             forceVec.y *= 0.5f;
             if (player.GetComponent<Player>().isGrounded())
             {
-                playerRB.AddForce(new Vector2(0, forceVec.y * waterForce / (dist * dist)));
+                playerRB.AddForce(new Vector2(0, forceVec.y * waterForce / ((dist * dist) + 1)));
             } else {
-                playerRB.AddForce(forceVec * waterForce / (dist * dist));
+                playerRB.AddForce(forceVec * waterForce / ((dist * dist) + 1));
             }
-            Debug.Log("kill");
             GameObject.Destroy(this.gameObject);
         }
     }
