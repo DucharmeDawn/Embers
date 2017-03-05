@@ -44,7 +44,7 @@ public class Player : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.tag == ("Ground"))
+        if (col.gameObject.tag.Equals("Ground"))
         {
             grounded = true;
         }
@@ -60,12 +60,14 @@ public class Player : MonoBehaviour {
 
     private void FixedUpdate()
 	{
+        Debug.Log(grounded);
 		horizontalForce = Input.GetAxis("Horizontal");
 		float y = rb.velocity.y;
 		jumpingForce = Input.GetAxis("Jump");
 		//rb.AddForce(new Vector2(groundAcc * horizontalForce, 0));
 		rb.velocity = new Vector2(groundAcc * horizontalForce, y);
 		if (jumpTime > 0 && jump) {
+
                 crazy = true;
 				grounded = false;
 				float x = rb.velocity.x;
@@ -85,4 +87,10 @@ public class Player : MonoBehaviour {
 			jumpTime = .25f;
 		}
 	}
+
+    private class Grounded : Player
+    {
+        Player self;
+
+    }
 }

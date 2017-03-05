@@ -11,6 +11,8 @@ public class Water : MonoBehaviour {
 
     public float waterForce = 750;
 
+    float life = 1f;
+
 
 	// Use this for initialization
 	void Start () {
@@ -25,8 +27,12 @@ public class Water : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //Debug.Log(rb.position.x + ", " + rb.position.y);
-	}
+        if (life < 0)
+        {
+            GameObject.Destroy(this.gameObject);
+        }
+        life -= Time.deltaTime;
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
