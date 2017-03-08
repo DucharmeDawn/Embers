@@ -48,7 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Main.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
-     <Compile Include="Assets\Water.cs" />
+     <Compile Include="Assets\Scripts\Water.cs" />
  <Reference Include="UnityEngine.Purchasing">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>

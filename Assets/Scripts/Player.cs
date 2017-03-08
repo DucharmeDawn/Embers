@@ -67,7 +67,6 @@ public class Player : MonoBehaviour {
 		//rb.AddForce(new Vector2(groundAcc * horizontalForce, 0));
 		rb.velocity = new Vector2(groundAcc * horizontalForce, y);
 		if (jumpTime > 0 && jump) {
-
                 crazy = true;
 				grounded = false;
 				float x = rb.velocity.x;
