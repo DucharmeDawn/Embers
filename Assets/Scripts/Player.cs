@@ -55,6 +55,7 @@ public class Player : MonoBehaviour {
     {
         if (col.gameObject.tag.Equals("Ground"))
         {
+            grounded = true;
             currState = new Ground(this);
         }
     }
@@ -63,6 +64,7 @@ public class Player : MonoBehaviour {
     {
         if (collision.gameObject.tag == "Ground")
         {
+            grounded = false;
             currState = new Jump(this);
         }
     }

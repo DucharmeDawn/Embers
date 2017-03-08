@@ -16,6 +16,8 @@ public class Main : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Vector3 myPos = gameObject.transform.position;
-        this.gameObject.transform.position = new Vector3(player.transform.position.x, myPos.y, myPos.z);
+        this.gameObject.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, myPos.z);
+
+        //Debug.Log(player.transform.position.x);
 	}
 }
