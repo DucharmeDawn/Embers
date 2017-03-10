@@ -8,6 +8,7 @@ public class Player : MonoBehaviour {
 	Rigidbody2D rb;
 	public float groundAcc = 10;
     //public float maxVerticalAcc = 
+    float maxAirHorizontalAcc = 1;
 	float jumpForce = 20;
 	float horizontalForce;
 	float jumpingForce;
@@ -26,7 +27,7 @@ public class Player : MonoBehaviour {
 	void Start () {
 		rb = gameObject.GetComponent<Rigidbody2D>();
         currState = new Ground(this);
-	}
+	} 
 
     public bool isGrounded()
     {
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour {
             waterTime = 0;
         }
         waterTime += Time.deltaTime;
+        Debug.Log(rb.velocity.y);
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -133,6 +135,7 @@ public class Player : MonoBehaviour {
         float groundAcc;
         float jumpForce;
         float horizontalForce;
+        float maxAirHorizontalAcc;
         float jumpingForce;
         float jumpTime;
         bool grounded;
@@ -145,6 +148,7 @@ public class Player : MonoBehaviour {
             this.groundAcc = self.groundAcc;
             this.jumpForce = self.jumpForce;
             this.horizontalForce = self.horizontalForce;
+            this.maxAirHorizontalAcc = self.maxAirHorizontalAcc;
             this.jumpingForce = self.jumpingForce;
             this.jumpTime = self.jumpTime;
             this.grounded = self.grounded;
@@ -174,6 +178,14 @@ public class Player : MonoBehaviour {
                 grounded = false;
                 float x = rb.velocity.x;
                 rb.velocity = new Vector2(x, jumpForce);
+                //if (x > maxAirHorizontalAcc)
+                //{
+                //    rb.velocity = new Vector2(maxAirHorizontalAcc, jumpForce);
+                //}
+                //else
+                //{
+                //    rb.velocity = new Vector2(x, jumpForce);
+                //}
                 jumpTime -= Time.deltaTime;
             }
             else
@@ -181,11 +193,29 @@ public class Player : MonoBehaviour {
                 if (crazy)
                 {
                     crazy = false;
-                    rb.velocity = new Vector2(groundAcc * horizontalForce, 0);
+                    float x = groundAcc * horizontalForce;
+                    rb.velocity = new Vector2(x, 0);
+                    //if (x > maxAirHorizontalAcc)
+                    //{
+                    //    rb.velocity = new Vector2(maxAirHorizontalAcc, 0);
+                    //}
+                    //else
+                    //{
+                    //    rb.velocity = new Vector2(x, 0);
+                    //}
                 }
                 else if (!(grounded))
                 {
-                    rb.velocity = new Vector2(groundAcc * horizontalForce, rb.velocity.y);
+                    float x = groundAcc * horizontalForce;
+                    rb.velocity = new Vector2(x, rb.velocity.y);
+                    //if (x > maxAirHorizontalAcc)
+                    //{
+                    //    rb.velocity = new Vector2(maxAirHorizontalAcc, rb.velocity.y);
+                    //}
+                    //else
+                    //{
+                    //    rb.velocity = new Vector2(x, rb.velocity.y);
+                    //}
                 }
             }
         }
