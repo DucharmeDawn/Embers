@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
 
@@ -16,6 +17,8 @@ public class Player : MonoBehaviour {
 	bool grounded;
     bool jump;
     bool crazy = false;
+    String scene;
+
 
     float waterTime = 0.5f;
     float waterShootTime = 0.025f;//amount of time between each water particle
@@ -25,9 +28,17 @@ public class Player : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
 		rb = gameObject.GetComponent<Rigidbody2D>();
         currState = new Ground(this);
-	} 
+        scene = SceneManager.GetActiveScene().name;
+        //wait();
+    } 
+
+    //IEnumerator wait()
+    //{
+    //    yield return new WaitForSeconds(0.5f);
+    //}
 
     public bool isGrounded()
     {
@@ -44,13 +55,14 @@ public class Player : MonoBehaviour {
         currState.Update();
         if (Input.GetButton("Fire1") && waterTime > waterShootTime)
         {
-            //Debug.Log("Player" + rb.position.x + ", " + rb.position.y);
-            //GameObject water = GameObject.CreatePrimitive(PrimitiveType.Cube);
             Instantiate<GameObject>(water, rb.transform.position, Quaternion.identity);
             waterTime = 0;
         }
         waterTime += Time.deltaTime;
-        Debug.Log(rb.velocity.y);
+        if (Input.GetKey("r"))
+        {
+            currState = new Dead(this);
+        }
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -59,6 +71,10 @@ public class Player : MonoBehaviour {
         {
             grounded = true;
             currState = new Ground(this);
+        }
+        if (col.gameObject.tag.Equals("Hazard"))
+        {
+            currState = new Dead(this);
         }
     }
 
@@ -220,4 +236,48 @@ public class Player : MonoBehaviour {
             }
         }
     }
-}
+
+        public class Dead : States
+        {
+            public String myName = "Dead";
+            Player self;
+            Rigidbody2D rb;
+            float groundAcc;
+            float jumpForce;
+            float horizontalForce;
+            float maxAirHorizontalAcc;
+            float jumpingForce;
+            float jumpTime;
+            bool grounded;
+            bool jump;
+            bool crazy = false;
+            String scene;
+            IEnumerator coroutine;
+
+            public Dead(Player self)
+            {
+                this.scene = self.scene;
+            }
+
+            public void FixedUpdate()
+            {
+
+            }
+
+            public string name()
+            {
+                return myName;
+            }
+
+            IEnumerator wait()
+            {
+                yield return new WaitForSeconds(5);
+            }
+
+            public void Update()
+            {
+                wait();
+                SceneManager.LoadScene(this.scene);
+            }
+        }
+    }

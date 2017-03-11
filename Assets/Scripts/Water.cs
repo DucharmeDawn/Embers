@@ -36,6 +36,9 @@ public class Water : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject.tag.Equals("Hazard")) {
+            Destroy(collision.gameObject);
+        }
         
 
 
