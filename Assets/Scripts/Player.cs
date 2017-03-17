@@ -7,13 +7,13 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour {
 
 	Rigidbody2D rb;
-	public float groundAcc = 10;
+	public float groundAcc = 16;
     //public float maxVerticalAcc = 
     float maxAirHorizontalAcc = 1;
 	float jumpForce = 20;
 	float horizontalForce;
 	float jumpingForce;
-	float jumpTime = .25f;
+	float jumpTime = .15f;
 	bool grounded;
     bool jump;
     bool crazy = false;
@@ -21,6 +21,9 @@ public class Player : MonoBehaviour {
 
 
     float waterTime = 0.5f;
+
+    //float waterShootTime = 1f;//amount of time between each water particle
+
     float waterShootTime = 0.025f;//amount of time between each water particle
 
     public GameObject water;
@@ -47,7 +50,7 @@ public class Player : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        jump = Input.GetButton("Jump");
+        jump = Input.GetButtonDown("Jump");
         if (jump && !currState.name().Equals("Jump"))
         {
             currState = new Jump(this);
@@ -59,7 +62,7 @@ public class Player : MonoBehaviour {
             waterTime = 0;
         }
         waterTime += Time.deltaTime;
-        if (Input.GetKey("r"))
+        if (Input.GetKeyDown("r"))
         {
             currState = new Dead(this);
         }
@@ -185,23 +188,14 @@ public class Player : MonoBehaviour {
         public void FixedUpdate()
         {
             horizontalForce = Input.GetAxis("Horizontal");
-            //float y = rb.velocity.y;
             jumpingForce = Input.GetAxis("Jump");
-            //rb.velocity = new Vector2(groundAcc * horizontalForce, y);
             if (jumpTime > 0 && jump)
             {
+                jump = false;
                 crazy = true;
                 grounded = false;
                 float x = rb.velocity.x;
                 rb.velocity = new Vector2(x, jumpForce);
-                //if (x > maxAirHorizontalAcc)
-                //{
-                //    rb.velocity = new Vector2(maxAirHorizontalAcc, jumpForce);
-                //}
-                //else
-                //{
-                //    rb.velocity = new Vector2(x, jumpForce);
-                //}
                 jumpTime -= Time.deltaTime;
             }
             else
@@ -211,27 +205,11 @@ public class Player : MonoBehaviour {
                     crazy = false;
                     float x = groundAcc * horizontalForce;
                     rb.velocity = new Vector2(x, 0);
-                    //if (x > maxAirHorizontalAcc)
-                    //{
-                    //    rb.velocity = new Vector2(maxAirHorizontalAcc, 0);
-                    //}
-                    //else
-                    //{
-                    //    rb.velocity = new Vector2(x, 0);
-                    //}
                 }
                 else if (!(grounded))
                 {
                     float x = groundAcc * horizontalForce;
                     rb.velocity = new Vector2(x, rb.velocity.y);
-                    //if (x > maxAirHorizontalAcc)
-                    //{
-                    //    rb.velocity = new Vector2(maxAirHorizontalAcc, rb.velocity.y);
-                    //}
-                    //else
-                    //{
-                    //    rb.velocity = new Vector2(x, rb.velocity.y);
-                    //}
                 }
             }
         }

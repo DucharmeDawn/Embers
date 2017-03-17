@@ -9,7 +9,7 @@ public class Water : MonoBehaviour {
 
     Rigidbody2D rb;
 
-    public float waterForce = 750;
+    public float waterForce = 825;
 
     float life = 1f;
 
@@ -36,9 +36,9 @@ public class Water : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag.Equals("Hazard")) {
-            Destroy(collision.gameObject);
-        }
+        //if (collision.gameObject.tag.Equals("Hazard")) {
+        //    Destroy(collision.gameObject);
+        //}
         
 
 
