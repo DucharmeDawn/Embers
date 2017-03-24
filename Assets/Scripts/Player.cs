@@ -18,6 +18,8 @@ public class Player : MonoBehaviour {
     bool jump;
     bool crazy = false;
     String scene;
+    float totalWater = 100;
+    float waterCount;
 
 
     float waterTime = 0.5f;
@@ -27,7 +29,12 @@ public class Player : MonoBehaviour {
     float waterShootTime = 0.025f;//amount of time between each water particle
 
     public GameObject water;
-    States currState; 
+    States currState;
+
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), waterCount.ToString());
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -35,6 +42,7 @@ public class Player : MonoBehaviour {
 		rb = gameObject.GetComponent<Rigidbody2D>();
         currState = new Ground(this);
         scene = SceneManager.GetActiveScene().name;
+        waterCount = totalWater;
         //wait();
     } 
 
@@ -56,10 +64,11 @@ public class Player : MonoBehaviour {
             currState = new Jump(this);
         }
         currState.Update();
-        if (Input.GetButton("Fire1") && waterTime > waterShootTime)
+        if (Input.GetButton("Fire1") && waterTime > waterShootTime && waterCount > 0)
         {
             Instantiate<GameObject>(water, rb.transform.position, Quaternion.identity);
             waterTime = 0;
+            waterCount -= 1;
         }
         waterTime += Time.deltaTime;
         if (Input.GetKeyDown("r"))
@@ -204,7 +213,7 @@ public class Player : MonoBehaviour {
                 {
                     crazy = false;
                     float x = groundAcc * horizontalForce;
-                    rb.velocity = new Vector2(x, 0);
+                    rb.velocity = new Vector2(x, 5);
                 }
                 else if (!(grounded))
                 {
