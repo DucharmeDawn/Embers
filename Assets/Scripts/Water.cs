@@ -13,6 +13,10 @@ public class Water : MonoBehaviour {
 
     float life = 1f;
 
+    public bool megaHose;
+    float megaWaterForce = 10000;
+    float megaLife = 0.05f;
+
 
 	// Use this for initialization
 	void Start () {
@@ -23,6 +27,10 @@ public class Water : MonoBehaviour {
         Vector2 mouse = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         mouse -= screenPlayer;
         rb.velocity = mouse.normalized * 27;
+        if (megaHose)
+        {
+            life = megaLife;
+        }
 	}
 	
 	// Update is called once per frame
@@ -30,6 +38,15 @@ public class Water : MonoBehaviour {
         if (life < 0)
         {
             GameObject.Destroy(this.gameObject);
+        }
+        int x = 1;
+        if (megaHose)
+        {
+            while (x < 10)
+            {
+                calcForce(megaWaterForce * 7 * (1 / (Mathf.Pow(2, 2 * x))));
+                x += 1;
+            }
         }
         life -= Time.deltaTime;
     }
@@ -40,22 +57,33 @@ public class Water : MonoBehaviour {
         //    Destroy(collision.gameObject);
         //}
         
-
-
         if (collision.gameObject.name != "Player")
         {
-            Vector2 forceVec = -1 * (rb.position - playerRB.position);
-            float dist = forceVec.magnitude;
-            forceVec = -1 * (rb.position - playerRB.position).normalized;
-            forceVec.x *= 2f;
-            forceVec.y *= 0.5f;
-            if (player.GetComponent<Player>().isGrounded())
+            if (megaHose)
             {
-                playerRB.AddForce(new Vector2(0, forceVec.y * waterForce / ((dist * dist) + 1)));
-            } else {
-                playerRB.AddForce(forceVec * waterForce / ((dist * dist) + 1));
+                calcForce(megaWaterForce);
+            } else
+            {
+                calcForce(waterForce);
             }
             GameObject.Destroy(this.gameObject);
+        }
+    }
+
+    private void calcForce(float x)
+    {
+        Vector2 forceVec = -1 * (rb.position - playerRB.position);
+        float dist = forceVec.magnitude;
+        forceVec = -1 * (rb.position - playerRB.position).normalized;
+        forceVec.x *= 2f;
+        forceVec.y *= 0.5f;
+        if (player.GetComponent<Player>().isGrounded())
+        {
+            playerRB.AddForce(new Vector2(0, forceVec.y * x / ((dist * dist) + 1)));
+        }
+        else
+        {
+            playerRB.AddForce(forceVec * x / ((dist * dist) + 1));
         }
     }
 }

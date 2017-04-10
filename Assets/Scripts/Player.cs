@@ -10,7 +10,7 @@ public class Player : MonoBehaviour {
 	public float groundAcc = 16;
     //public float maxVerticalAcc = 
     float maxAirHorizontalAcc = 1;
-	float jumpForce = 20;
+	float jumpForce = 15;
 	float horizontalForce;
 	float jumpingForce;
 	float jumpTime = .15f;
@@ -20,6 +20,7 @@ public class Player : MonoBehaviour {
     String scene;
     float totalWater = 100;
     float waterCount;
+    int megaHoseInt;
 
 
     float waterTime = 0.5f;
@@ -29,15 +30,17 @@ public class Player : MonoBehaviour {
     float waterShootTime = 0.025f;//amount of time between each water particle
 
     public GameObject water;
+    public GameObject megaHose;
     States currState;
 
     private void OnGUI()
     {
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height), waterCount.ToString());
+        GUI.Label(new Rect(0, 100, Screen.width, Screen.height), megaHoseInt.ToString());
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
 		rb = gameObject.GetComponent<Rigidbody2D>();
         currState = new Ground(this);
@@ -64,11 +67,20 @@ public class Player : MonoBehaviour {
             currState = new Jump(this);
         }
         currState.Update();
-        if (Input.GetButton("Fire1") && waterTime > waterShootTime && waterCount > 0)
+        if (Input.GetButton("Fire1") && waterTime > waterShootTime)
         {
-            Instantiate<GameObject>(water, rb.transform.position, Quaternion.identity);
-            waterTime = 0;
-            waterCount -= 1;
+            if (megaHoseInt > 0)
+            {
+                Instantiate<GameObject>(megaHose, rb.transform.position, Quaternion.identity);
+                megaHoseInt -= 1;
+                waterTime = -1;
+            }
+            else if (waterCount > 0)
+            {
+                Instantiate<GameObject>(water, rb.transform.position, Quaternion.identity);
+                waterTime = 0;
+                waterCount -= 1;
+            }
         }
         waterTime += Time.deltaTime;
         if (Input.GetKeyDown("r"))
@@ -87,6 +99,26 @@ public class Player : MonoBehaviour {
         if (col.gameObject.tag.Equals("Hazard"))
         {
             currState = new Dead(this);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag.Equals("megaHose"))
+        {
+            megaHoseInt = 3;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D col)
+    {
+        if (col.gameObject.tag.Equals("waterSource"))
+        {
+            Debug.Log("stay");
+            if (totalWater > waterCount)
+            {
+                waterCount += 1;
+            }
         }
     }
 
@@ -213,7 +245,7 @@ public class Player : MonoBehaviour {
                 {
                     crazy = false;
                     float x = groundAcc * horizontalForce;
-                    rb.velocity = new Vector2(x, 5);
+                    rb.velocity = new Vector2(x, 3);
                 }
                 else if (!(grounded))
                 {

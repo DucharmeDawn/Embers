@@ -41,7 +41,6 @@ public class Fire : MonoBehaviour {
             }
              else if (hits > 0)
             {
-                Debug.Log(size);
                 size -= 0.1f;
                 hits -= 1;
                 gameObject.GetComponent<Transform>().localScale = new Vector3(size, size);
