@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
@@ -19,7 +20,7 @@ public class Player : MonoBehaviour {
     bool crazy = false;
     String scene;
     float totalWater = 100;
-    float waterCount;
+    public float waterCount;
     int megaHoseInt;
 
 
@@ -31,18 +32,19 @@ public class Player : MonoBehaviour {
 
     public GameObject water;
     public GameObject megaHose;
+    public Slider waterMeter;
     States currState;
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), waterCount.ToString());
-        GUI.Label(new Rect(0, 100, Screen.width, Screen.height), megaHoseInt.ToString());
+        //GUI.Label(new Rect(0, 0, Screen.width, Screen.height), waterCount.ToString());
+        GUI.color = Color.black;
+        GUI.Label(new Rect(70, 40, Screen.width, Screen.height), " x " + megaHoseInt.ToString());
     }
 
     // Use this for initialization
     void Start () {
-
-		rb = gameObject.GetComponent<Rigidbody2D>();
+        rb = gameObject.GetComponent<Rigidbody2D>();
         currState = new Ground(this);
         scene = SceneManager.GetActiveScene().name;
         waterCount = totalWater;
@@ -132,7 +134,8 @@ public class Player : MonoBehaviour {
     }
 
     private void FixedUpdate()
-	{
+    {
+        waterMeter.value = waterCount;
         currState.FixedUpdate();
 	}
 
