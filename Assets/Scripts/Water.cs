@@ -57,7 +57,7 @@ public class Water : MonoBehaviour {
         //    Destroy(collision.gameObject);
         //}
         
-        if (collision.gameObject.name != "Player")
+        if (collision.gameObject.name != "Player" && collision.gameObject.tag != "waterSource")
         {
             if (megaHose)
             {
