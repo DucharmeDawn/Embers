@@ -6,22 +6,15 @@ using UnityEngine.UI;
 
 public class levelButton : MonoBehaviour {
 
-    //public int x;
-    //public Button yourButton;
-
-    //void Start()
-    //{
-    //    Button btn = yourButton.GetComponent<Button>();
-    //    btn.onClick.AddListener(TaskOnClick);
-    //}
-
-    //public void TaskOnClick()
-    //{
-    //    Debug.Log("You have clicked the button!");
-    //    SceneManager.LoadScene("Level" + x.ToString());
-    //}
-
     string sceneName;
+    public float xPos;
+    public float yPos;
+
+    private void Awake()
+    {
+        this.GetComponent<Transform>().position = new Vector2(xPos * Screen.width, yPos * Screen.height);
+        this.GetComponent<Transform>().localScale = new Vector2(Screen.width / 265.25f, Screen.height / 149.25f);
+    }
 
     void Start()
     {
@@ -30,8 +23,6 @@ public class levelButton : MonoBehaviour {
 
     public void goToLevel(int x)
     {
-        Debug.Log("adsf");
         SceneManager.LoadScene("Level" + x.ToString());
-        SceneManager.UnloadSceneAsync(sceneName);
     }
 }

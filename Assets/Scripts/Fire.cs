@@ -13,19 +13,23 @@ public class Fire : MonoBehaviour {
     SpriteRenderer sr;
     BoxCollider2D bc;
     Rigidbody2D rb;
+    BoxCollider2D selfBC;
     Transform tr;
     Vector3 pos;
+
+    public GameObject lit;
 
 
 	// Use this for initialization
 	void Start ()
     {
+        selfBC = gameObject.GetComponent<BoxCollider2D>();
         hits = health;
         size = startSize;
-        rb = gameObject.GetComponent<Rigidbody2D>();
-        sr = gameObject.GetComponent<SpriteRenderer>();
-        bc = gameObject.GetComponent<BoxCollider2D>();
-        tr = gameObject.GetComponent<Transform>();
+        rb = lit.GetComponent<Rigidbody2D>();
+        sr = lit.GetComponent<SpriteRenderer>();
+        bc = lit.GetComponent<BoxCollider2D>();
+        tr = lit.GetComponent<Transform>();
         pos = tr.position;
     }
 
@@ -35,15 +39,18 @@ public class Fire : MonoBehaviour {
         {
             if (hits == 0)
             {
+                selfBC.enabled = false;
+                //gameObject.GetComponent<SpriteRenderer>().enabled = false;
                 sr.enabled = false;
                 //bc.isTrigger = true;
                 bc.enabled = false;
+                rb.gravityScale = 0;
             }
              else if (hits > 0)
             {
                 size -= 0.1f;
                 hits -= 1;
-                gameObject.GetComponent<Transform>().localScale = new Vector3(size, size);
+                lit.GetComponent<Transform>().localScale = new Vector3(size, size);
                 //gameObject.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(size, size);
             }
             //else
@@ -59,20 +66,25 @@ public class Fire : MonoBehaviour {
     void Update () {
 		if (hits == 0)
         {
-            Debug.Log("0 size");
             time += Time.deltaTime;
             if (time > respawnTime)
             {
-                Debug.Log("respawn");
                 size = startSize;
                 hits = health;
-                gameObject.GetComponent<Transform>().localScale = new Vector3(size, size);
+                lit.GetComponent<Transform>().localScale = new Vector3(size, size);
                 tr.position = pos;
                 //bc.isTrigger = false;
-                bc.enabled = true;
                 time = 0;
                 sr.enabled = true;
+                bc.enabled = true;
+                rb.gravityScale = 1;
+                selfBC.enabled = true;
             }
         }
 	}
+
+    public int life()
+    {
+        return hits;
+    }
 }

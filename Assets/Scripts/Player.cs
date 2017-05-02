@@ -22,7 +22,8 @@ public class Player : MonoBehaviour {
     float totalWater = 100;
     public float waterCount;
     int megaHoseInt;
-
+    float timer;
+    float deltaTimer;
 
     float waterTime = 0.5f;
 
@@ -34,12 +35,20 @@ public class Player : MonoBehaviour {
     public GameObject megaHose;
     public Slider waterMeter;
     States currState;
+    
+    public AudioSource aud;
+
+    private void Awake()
+    {
+        aud.enabled = true;
+    }
 
     private void OnGUI()
     {
         //GUI.Label(new Rect(0, 0, Screen.width, Screen.height), waterCount.ToString());
         GUI.color = Color.black;
-        GUI.Label(new Rect(70, 40, Screen.width, Screen.height), " x " + megaHoseInt.ToString());
+        GUI.Label(new Rect(Screen.width * 0.06f, Screen.height * 0.075f, 50, 50), " x " + megaHoseInt.ToString());
+        GUI.Label(new Rect(Screen.width * 0.05f, Screen.height * 0.13f, 100, 100), timer.ToString());
     }
 
     // Use this for initialization
@@ -48,6 +57,8 @@ public class Player : MonoBehaviour {
         currState = new Ground(this);
         scene = SceneManager.GetActiveScene().name;
         waterCount = totalWater;
+        timer = 0f;
+        aud.enabled = true;
         //wait();
     } 
 
@@ -64,11 +75,11 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         jump = Input.GetButtonDown("Jump");
+        currState.Update();
         if (jump && !currState.name().Equals("Jump"))
         {
             currState = new Jump(this);
         }
-        currState.Update();
         if (Input.GetButton("Fire1") && waterTime > waterShootTime)
         {
             if (megaHoseInt > 0)
@@ -84,23 +95,44 @@ public class Player : MonoBehaviour {
                 waterCount -= 1;
             }
         }
+        if (Input.GetButtonDown("Fire1") && waterCount > 0)
+        {
+            aud.Play();
+        }
+        if (Input.GetButtonUp("Fire1") || waterCount < 1)
+        {
+            aud.Stop();
+        }
         waterTime += Time.deltaTime;
         if (Input.GetKeyDown("r"))
         {
             currState = new Dead(this);
         }
+        if (Input.GetKeyDown("escape"))
+        {
+            SceneManager.LoadScene("Menu");
+            SceneManager.UnloadSceneAsync(scene);
+        }
+        timer = (float) Math.Round(timer + Time.deltaTime, 2);
     }
 
-    void OnCollisionEnter2D(Collision2D col)
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag.Equals("Hazard"))
+        {
+            currState = new Dead(this);
+        }
+    }
+
+    void OnCollisionStay2D(Collision2D col)
     {
         if (col.gameObject.tag.Equals("Ground"))
         {
-            grounded = true;
-            currState = new Ground(this);
-        }
-        if (col.gameObject.tag.Equals("Hazard"))
-        {
-            currState = new Dead(this);
+            if (currState.name() != "Dead")
+            {
+                grounded = true;
+                currState = new Ground(this);
+            }
         }
     }
 
@@ -116,7 +148,6 @@ public class Player : MonoBehaviour {
     {
         if (col.gameObject.tag.Equals("waterSource"))
         {
-            Debug.Log("stay");
             if (totalWater > waterCount)
             {
                 waterCount += 1;
